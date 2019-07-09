@@ -62,6 +62,10 @@ class App extends Component {
     };
   }
 
+  handleGalaxyClick = event => {
+    this.setState({ numStars: Number(this.state.numStars) + 1 });
+  };
+
   handleChange = event => {
     this.setState({
       [event.target.name]: event.target.value
@@ -73,7 +77,7 @@ class App extends Component {
     return (
       <div className="App">
         <Inputs {...props} handleChange={this.handleChange} />
-        <Galaxy {...props} />
+        <Galaxy {...props} handleGalaxyClick={this.handleGalaxyClick} />
       </div>
     );
   }
@@ -94,41 +98,44 @@ const Inputs = ({ handleChange, ...rest }) => {
   return <React.Fragment>{makeInputs}</React.Fragment>;
 };
 
-const Galaxy = ({
-  galaxySize,
-  galaxyMargin,
-  radiusMin,
-  radiusMax,
-  numStars,
-  useBias,
-  ...props
-}) => {
-  const mincoord = galaxyMargin;
-  const maxcoord = galaxySize - 2 * galaxyMargin;
-  const starArray = Array.apply(null, { length: numStars }).map(
-    Number.call,
-    Number
-  );
-  const makeStars = starArray.map(starIndex => (
-    <Star
-      key={starIndex}
-      x={randNumber(mincoord, maxcoord)}
-      y={randNumber(mincoord, maxcoord)}
-      r={
-        Number(useBias) === 1
-          ? randNumberBiasMin(radiusMin, radiusMax)
-          : randNumber(radiusMin, radiusMax)
-      }
-      fill={randIndex(fillArray)}
-    />
-  ));
-  return (
-    <Svg height={galaxySize} width={galaxySize}>
-      <SpaceBkg x="0" y="0" galaxySize={galaxySize} />
-      {makeStars}
-    </Svg>
-  );
-};
+class Galaxy extends Component {
+  render() {
+    const {
+      galaxyMargin,
+      galaxySize,
+      numStars,
+      radiusMin,
+      radiusMax,
+      useBias,
+      handleGalaxyClick
+    } = this.props;
+    const mincoord = galaxyMargin;
+    const maxcoord = galaxySize - 2 * galaxyMargin;
+    const starArray = Array.apply(null, { length: numStars }).map(
+      Number.call,
+      Number
+    );
+    const makeStars = starArray.map(starIndex => (
+      <Star
+        key={starIndex}
+        x={randNumber(mincoord, maxcoord)}
+        y={randNumber(mincoord, maxcoord)}
+        r={
+          Number(useBias) === 1
+            ? randNumberBiasMin(radiusMin, radiusMax)
+            : randNumber(radiusMin, radiusMax)
+        }
+        fill={randIndex(fillArray)}
+      />
+    ));
+    return (
+      <Svg onClick={handleGalaxyClick} height={galaxySize} width={galaxySize}>
+        <SpaceBkg x="0" y="0" galaxySize={galaxySize} />
+        {makeStars}
+      </Svg>
+    );
+  }
+}
 
 const Star = ({ x = 0, y = 0, r = 0.1, fill = "white" }) => {
   const rr = isNaN(r) ? 0.1 : r;
@@ -158,6 +165,12 @@ function randNumber(min = 0, max = 1) {
   return Number(Math.random() * Number(max) + Number(min));
 }
 
+function randNumberBias(min = 0, max = 1) {
+  const beta = randBeta();
+  const beta_bias = beta < 0.5 ? 2 * beta : 2 * (1 - beta);
+  return beta_bias * Number(max) + Number(min);
+}
+
 function randNumberBiasMin(min = 0, max = 1) {
   const beta = randBeta();
   const beta_bias = beta < 0.5 ? 2 * beta : 2 * (1 - beta);
@@ -173,6 +186,12 @@ function randNumberBiasMax(min = 0, max = 1) {
 function randBeta() {
   const randNum = Number(Math.random());
   return Math.sin((randNum * Math.PI) / 2) ** 2;
+}
+
+function betaDist(theta, a, b) {
+  const atheta = theta ** (a - 1);
+  const btheta = (1 - theta) ** (b - 1);
+  return atheta * btheta;
 }
 
 function randIndex(array = []) {
