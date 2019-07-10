@@ -56,9 +56,11 @@ class App extends Component {
       numStars: Number(3000),
       galaxySize: Number(700),
       galaxyMargin: Number(5),
-      radiusMin: Number(0.1),
-      radiusMax: Number(1),
-      useBias: Number(1)
+      dimRad: Number(0.1),
+      brightRad: Number(5),
+      dimMag: Number(6.5),
+      brightMag: Number(-1.0),
+      negMagFac: Number(1.5)
     };
   }
 
@@ -104,9 +106,11 @@ class Galaxy extends Component {
       galaxyMargin,
       galaxySize,
       numStars,
-      radiusMin,
-      radiusMax,
-      useBias,
+      dimRad,
+      brightRad,
+      dimMag,
+      brightMag,
+      negMagFac,
       handleGalaxyClick
     } = this.props;
     const mincoord = galaxyMargin;
@@ -120,11 +124,14 @@ class Galaxy extends Component {
         key={starIndex}
         x={randNumber(mincoord, maxcoord)}
         y={randNumber(mincoord, maxcoord)}
-        r={
-          Number(useBias) === 1
-            ? randNumberBiasMin(radiusMin, radiusMax)
-            : randNumber(radiusMin, radiusMax)
-        }
+        r={starRadius(
+          starMagnitude(Math.random()),
+          brightMag,
+          brightRad,
+          dimMag,
+          dimRad,
+          negMagFac
+        )}
         fill={randIndex(fillArray)}
       />
     ));
@@ -183,6 +190,12 @@ function randNumberBiasMax(min = 0, max = 1) {
   return beta_bias * Number(max) + Number(min);
 }
 
+function randNumberBetaDist(min = 0, max = 1, abeta, bbeta) {
+  const randNum = Number(Math.random());
+  const betaDistNum = betaDist(randNum, Number(abeta), Number(bbeta));
+  return betaDistNum * Number(max) + Number(min);
+}
+
 function randBeta() {
   const randNum = Number(Math.random());
   return Math.sin((randNum * Math.PI) / 2) ** 2;
@@ -192,6 +205,32 @@ function betaDist(theta, a, b) {
   const atheta = theta ** (a - 1);
   const btheta = (1 - theta) ** (b - 1);
   return atheta * btheta;
+}
+
+function starMagnitude(probability) {
+  const A = 0.775;
+  const B = 6.3618;
+  const retMag = A * Math.log(probability) + B;
+  return retMag;
+}
+
+function starRadius(
+  magnitude,
+  brightMag,
+  brightRad,
+  dimMag,
+  dimRad,
+  negMagFac = 1.0
+) {
+  const mslope = (brightRad - dimRad) / (brightMag - dimMag);
+  const b = brightRad - mslope * brightMag;
+  const retRadius = mslope * magnitude + b;
+  const facRetRad = retRadius < 0 ? retRadius * negMagFac : retRadius;
+  return facRetRad > brightRad
+    ? brightRad * facRetRad
+    : facRetRad < dimRad
+    ? dimRad
+    : facRetRad;
 }
 
 function randIndex(array = []) {
