@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Svg, { Circle, Rect } from "react-native-svg";
 import "./App.css";
 import InputBox from "./components/InputBox";
+import { randNumber } from "./util/util.js";
 
 const fillArray = [
   "aqua",
@@ -53,14 +54,14 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      numStars: Number(3000),
+      numStars: Number(2000),
       galaxySize: Number(700),
       galaxyMargin: Number(5),
       dimRad: Number(0.1),
-      brightRad: Number(5),
+      brightRad: Number(3),
       dimMag: Number(6.5),
       brightMag: Number(-1.0),
-      negMagFac: Number(1.5)
+      negMagFac: Number(1.2)
     };
   }
 
@@ -161,51 +162,6 @@ const SpaceBkg = ({ x, y, galaxySize, stroke = "black", fill = "black" }) => {
     />
   );
 };
-
-function randInt(min = 0, max = 1) {
-  return Number(
-    Math.floor(Math.random() * Math.floor(Number(max)) + Number(min))
-  );
-}
-
-function randNumber(min = 0, max = 1) {
-  return Number(Math.random() * Number(max) + Number(min));
-}
-
-function randNumberBias(min = 0, max = 1) {
-  const beta = randBeta();
-  const beta_bias = beta < 0.5 ? 2 * beta : 2 * (1 - beta);
-  return beta_bias * Number(max) + Number(min);
-}
-
-function randNumberBiasMin(min = 0, max = 1) {
-  const beta = randBeta();
-  const beta_bias = beta < 0.5 ? 2 * beta : 2 * (1 - beta);
-  return beta_bias * Number(max) + Number(min);
-}
-
-function randNumberBiasMax(min = 0, max = 1) {
-  const beta = randBeta();
-  const beta_bias = beta > 0.5 ? 2 * beta - 1 : 2 * (1 - beta) - 1;
-  return beta_bias * Number(max) + Number(min);
-}
-
-function randNumberBetaDist(min = 0, max = 1, abeta, bbeta) {
-  const randNum = Number(Math.random());
-  const betaDistNum = betaDist(randNum, Number(abeta), Number(bbeta));
-  return betaDistNum * Number(max) + Number(min);
-}
-
-function randBeta() {
-  const randNum = Number(Math.random());
-  return Math.sin((randNum * Math.PI) / 2) ** 2;
-}
-
-function betaDist(theta, a, b) {
-  const atheta = theta ** (a - 1);
-  const btheta = (1 - theta) ** (b - 1);
-  return atheta * btheta;
-}
 
 function starMagnitude(probability) {
   const A = 0.775;
