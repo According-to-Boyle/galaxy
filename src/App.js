@@ -79,6 +79,7 @@ class App extends Component {
     const { ...props } = this.state;
     return (
       <div className="App">
+        <a href="https://github.com/jmbjr/galaxy">GitHub repo</a>
         <Inputs {...props} handleChange={this.handleChange} />
         <Galaxy {...props} handleGalaxyClick={this.handleGalaxyClick} />
       </div>
