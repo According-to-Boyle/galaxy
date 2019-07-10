@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Svg, { Circle, Rect } from "react-native-svg";
 import "./App.css";
 import InputBox from "./components/InputBox";
-import { randNumber } from "./util/util.js";
+import { randNumber, randIndex } from "./util/util.js";
 
 const fillArray = [
   "aqua",
@@ -188,10 +188,6 @@ function starRadius(
     : facRetRad < dimRad
     ? dimRad
     : facRetRad;
-}
-
-function randIndex(array = []) {
-  return array[Math.floor(Math.random() * array.length)];
 }
 
 export default App;

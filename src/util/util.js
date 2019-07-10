@@ -43,6 +43,11 @@ function betaDist(theta, a, b) {
   return atheta * btheta;
 }
 
+function randIndex(array = []) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
 module.exports = {
-  randNumber: randNumber
+  randNumber: randNumber,
+  randIndex: randIndex
 };
