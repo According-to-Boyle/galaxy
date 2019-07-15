@@ -61,18 +61,31 @@ class App extends Component {
       brightRad: Number(3),
       dimMag: Number(6.5),
       brightMag: Number(-1.0),
-      negMagFac: Number(1.2)
+      negMagFac: Number(50),
+      starArray: []
     };
+  }
+  componentDidMount() {
+    this.regenStarArray(this.state);
   }
 
   handleGalaxyClick = event => {
-    this.setState({ numStars: Number(this.state.numStars) + 1 });
+    this.regenStarArray(this.state);
   };
 
   handleChange = event => {
     this.setState({
       [event.target.name]: event.target.value
     });
+    //remember, setState is async. So we need to actually replace event.target.name's value and pass it to an update function
+    this.regenStarArray({
+      ...this.state,
+      [event.target.name]: event.target.value
+    });
+  };
+
+  regenStarArray = data => {
+    this.setState({ starArray: createStarArray(data) });
   };
 
   render() {
@@ -81,7 +94,11 @@ class App extends Component {
       <div className="App">
         <a href="https://github.com/jmbjr/galaxy">GitHub repo</a>
         <Inputs {...props} handleChange={this.handleChange} />
-        <Galaxy {...props} handleGalaxyClick={this.handleGalaxyClick} />
+        <Galaxy
+          {...props}
+          starArray={this.state.starArray}
+          handleGalaxyClick={this.handleGalaxyClick}
+        />
       </div>
     );
   }
@@ -104,51 +121,25 @@ const Inputs = ({ handleChange, ...rest }) => {
 
 class Galaxy extends Component {
   render() {
-    const {
-      galaxyMargin,
-      galaxySize,
-      numStars,
-      dimRad,
-      brightRad,
-      dimMag,
-      brightMag,
-      negMagFac,
-      handleGalaxyClick
-    } = this.props;
-    const mincoord = galaxyMargin;
-    const maxcoord = galaxySize - 2 * galaxyMargin;
-    const starArray = Array.apply(null, { length: numStars }).map(
-      Number.call,
-      Number
-    );
-    const makeStars = starArray.map(starIndex => (
-      <Star
-        key={starIndex}
-        x={randNumber(mincoord, maxcoord)}
-        y={randNumber(mincoord, maxcoord)}
-        r={starRadius(
-          starMagnitude(Math.random()),
-          brightMag,
-          brightRad,
-          dimMag,
-          dimRad,
-          negMagFac
-        )}
-        fill={randIndex(fillArray)}
-      />
+    const drawStars = this.props.starArray.map((star, index) => (
+      <Star key={index} star={star} />
     ));
     return (
-      <Svg onClick={handleGalaxyClick} height={galaxySize} width={galaxySize}>
-        <SpaceBkg x="0" y="0" galaxySize={galaxySize} />
-        {makeStars}
+      <Svg
+        onClick={this.props.handleGalaxyClick}
+        height={this.props.galaxySize}
+        width={this.props.galaxySize}
+      >
+        <SpaceBkg x="0" y="0" galaxySize={this.props.galaxySize} />
+        {drawStars}
       </Svg>
     );
   }
 }
 
-const Star = ({ x = 0, y = 0, r = 0.1, fill = "white" }) => {
-  const rr = isNaN(r) ? 0.1 : r;
-  return <Circle cx={x} cy={y} r={rr} fill={fill} />;
+const Star = ({ star }) => {
+  const rr = isNaN(star.radius) ? 0.1 : star.radius;
+  return <Circle cx={star.x} cy={star.y} r={rr} fill={star.fill} />;
 };
 
 const SpaceBkg = ({ x, y, galaxySize, stroke = "black", fill = "black" }) => {
@@ -163,6 +154,42 @@ const SpaceBkg = ({ x, y, galaxySize, stroke = "black", fill = "black" }) => {
     />
   );
 };
+
+function createStarArray(data) {
+  const {
+    galaxyMargin,
+    galaxySize,
+    numStars,
+    dimRad,
+    brightRad,
+    dimMag,
+    brightMag,
+    negMagFac
+  } = data;
+
+  const mincoord = galaxyMargin;
+  const maxcoord = galaxySize - 2 * galaxyMargin;
+  const protoArray = Array.apply(null, { length: numStars }).map(
+    Number.call,
+    Number
+  );
+
+  const starArray = protoArray.map(star => ({
+    ...star,
+    x: randNumber(mincoord, maxcoord),
+    y: randNumber(mincoord, maxcoord),
+    radius: starRadius(
+      starMagnitude(Math.random()),
+      brightMag,
+      brightRad,
+      dimMag,
+      dimRad,
+      negMagFac
+    ),
+    fill: randIndex(fillArray)
+  }));
+  return starArray;
+}
 
 function starMagnitude(probability) {
   const A = 0.775;
