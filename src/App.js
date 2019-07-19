@@ -3,6 +3,7 @@ import Svg, { Circle, Rect } from "react-native-svg";
 import "./App.css";
 import InputBox from "./components/InputBox";
 import { randNumber, randIndex } from "./util/util.js";
+import Faker from "faker";
 
 const fillArray = [
   "aqua",
@@ -62,7 +63,9 @@ class App extends Component {
       dimMag: Number(6.5),
       brightMag: Number(-1.0),
       negMagFac: Number(50),
-      starArray: []
+      starArray: [],
+      detailStar: { x: 50, y: 50, radius: 5, fill: "black" },
+      detailStarName: ""
     };
   }
   componentDidMount() {
@@ -71,6 +74,31 @@ class App extends Component {
 
   handleGalaxyClick = event => {
     this.regenStarArray(this.state);
+  };
+
+  handleStarClick = e => {
+    const target = e.target;
+    //set in state
+    const viewScaleFactor = 20;
+    const size = 200;
+    const maxsize = size * 0.5;
+    e.preventDefault();
+
+    const r = target.getAttribute("r");
+    const rFac = r * viewScaleFactor;
+    const rr = rFac > maxsize ? maxsize : rFac;
+    const fill = target.getAttribute("fill");
+    const name = target.getAttribute("name");
+    this.setState({
+      detailStar: {
+        x: size / 2,
+        y: size / 2,
+        radius: rr,
+        fill: fill
+      },
+      detailStarName: name
+    });
+    // target.setAttribute("fill", fill);
   };
 
   handleChange = event => {
@@ -94,10 +122,14 @@ class App extends Component {
       <div className="App">
         <a href="https://github.com/jmbjr/galaxy">GitHub repo</a>
         <Inputs {...props} handleChange={this.handleChange} />
+        <StarView
+          detailStar={props.detailStar}
+          detailStarName={props.detailStarName}
+        />
         <Galaxy
           {...props}
           starArray={this.state.starArray}
-          handleGalaxyClick={this.handleGalaxyClick}
+          handleStarClick={this.handleStarClick}
         />
       </div>
     );
@@ -121,15 +153,12 @@ const Inputs = ({ handleChange, ...rest }) => {
 
 class Galaxy extends Component {
   render() {
+    const handleStarClick = this.props.handleStarClick;
     const drawStars = this.props.starArray.map((star, index) => (
-      <Star key={index} star={star} />
+      <Star key={index} star={star} handleStarClick={handleStarClick} />
     ));
     return (
-      <Svg
-        onClick={this.props.handleGalaxyClick}
-        height={this.props.galaxySize}
-        width={this.props.galaxySize}
-      >
+      <Svg height={this.props.galaxySize} width={this.props.galaxySize}>
         <SpaceBkg x="0" y="0" galaxySize={this.props.galaxySize} />
         {drawStars}
       </Svg>
@@ -137,9 +166,35 @@ class Galaxy extends Component {
   }
 }
 
-const Star = ({ star }) => {
+class StarView extends Component {
+  render() {
+    const bigStar = { ...this.props.detailStar };
+    const size = 200;
+    console.log(`bigStar ${bigStar.radius} ${bigStar.x} ${bigStar.y}`);
+    return (
+      <Svg height={size} width={size}>
+        <SpaceBkg x="0" y="0" galaxySize={size} />
+        <Star star={bigStar} />
+        <text textAnchor="middle" x={size / 2} y={size * 0.95} fill="white">
+          {this.props.detailStarName}
+        </text>
+      </Svg>
+    );
+  }
+}
+
+const Star = ({ star, handleStarClick }) => {
   const rr = isNaN(star.radius) ? 0.1 : star.radius;
-  return <Circle cx={star.x} cy={star.y} r={rr} fill={star.fill} />;
+  return (
+    <Circle
+      cx={star.x}
+      cy={star.y}
+      r={rr}
+      fill={star.fill}
+      onClick={handleStarClick}
+      name={star.name}
+    />
+  );
 };
 
 const SpaceBkg = ({ x, y, galaxySize, stroke = "black", fill = "black" }) => {
@@ -186,7 +241,8 @@ function createStarArray(data) {
       dimRad,
       negMagFac
     ),
-    fill: randIndex(fillArray)
+    fill: randIndex(fillArray),
+    name: `${Faker.lorem.word()}${Faker.lorem.word()}`
   }));
   return starArray;
 }
