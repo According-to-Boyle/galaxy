@@ -51,7 +51,7 @@ const fillArray = [
   "white"
 ];
 
-const blankStar = { x: 50, y: 50, radius: 5, fill: "black" };
+const blankStar = { x: 50, y: 50, radius: 5, fill: "black", name: "" };
 const viewScaleFactor = 20;
 const size = 200;
 const maxsize = size * 0.4;
@@ -62,7 +62,7 @@ class App extends Component {
     super(props);
     this.state = {
       numStars: Number(2000),
-      galaxySize: Number(700),
+      galaxySize: Number(500),
       galaxyMargin: Number(5),
       dimRad: Number(0.1),
       brightRad: Number(3),
@@ -72,7 +72,7 @@ class App extends Component {
       starArray: [],
       detailStar: blankStar,
       detailStarName: "",
-      currentStarIndex: 0
+      currentStarIndex: -1
     };
   }
   componentDidMount() {
@@ -127,7 +127,11 @@ class App extends Component {
 
   regenStarArray = data => {
     this.setState({ starArray: createStarArray(data) });
-    this.setState({ detailStar: blankStar, detailStarName: "" });
+    this.setState({
+      detailStar: blankStar,
+      detailStarName: "",
+      currentStarIndex: -1
+    });
   };
 
   regenStarField = () => {
@@ -175,7 +179,7 @@ class App extends Component {
         <Button content="<" variant="white" onClick={this.selectPreviousStar} />
         <Button content=">" variant="white" onClick={this.selectNextStar} />
         <Button content=">>|" variant="white" onClick={this.selectLastStar} />
-        <Inputs {...props} handleChange={this.handleChange} />
+        <br />
         <StarView
           detailStar={props.detailStar}
           detailStarName={props.detailStarName}
@@ -184,7 +188,9 @@ class App extends Component {
           {...props}
           starArray={this.state.starArray}
           handleStarClick={this.handleStarClick}
+          highlightedStarIndex={this.state.currentStarIndex}
         />
+        <Inputs {...props} handleChange={this.handleChange} />
       </div>
     );
   }
@@ -218,14 +224,25 @@ const Inputs = ({ handleChange, ...rest }) => {
 
 class Galaxy extends Component {
   render() {
-    const handleStarClick = this.props.handleStarClick;
-    const drawStars = this.props.starArray.map((star, index) => (
+    const { starArray, highlightedStarIndex, handleStarClick } = this.props;
+
+    const highlightedStar =
+      typeof starArray[highlightedStarIndex] === "undefined"
+        ? blankStar
+        : starArray[highlightedStarIndex];
+
+    const drawStars = starArray.map((star, index) => (
       <Star key={index} star={star} handleStarClick={handleStarClick} />
     ));
     return (
       <Svg height={this.props.galaxySize} width={this.props.galaxySize}>
         <SpaceBkg x="0" y="0" galaxySize={this.props.galaxySize} />
         {drawStars}
+        <HighlightedStar
+          key={highlightedStarIndex}
+          star={highlightedStar}
+          handleStarClick={handleStarClick}
+        />
       </Svg>
     );
   }
@@ -234,8 +251,6 @@ class Galaxy extends Component {
 class StarView extends Component {
   render() {
     const bigStar = { ...this.props.detailStar };
-    const size = 200;
-    console.log(`bigStar ${bigStar.radius} ${bigStar.x} ${bigStar.y}`);
     return (
       <Svg height={size} width={size}>
         <SpaceBkg x="0" y="0" galaxySize={size} />
@@ -259,6 +274,27 @@ const Star = ({ star, handleStarClick }) => {
       onClick={handleStarClick}
       name={star.name}
     />
+  );
+};
+
+const HighlightedStar = ({ star, handleStarClick }) => {
+  const rr = isNaN(star.radius) ? 0.1 : star.radius;
+  const highlightRadius = 5;
+  const highlightRadiusThickness = 1;
+  const innerRadius = highlightRadius - highlightRadiusThickness;
+  return (
+    <React.Fragment>
+      <Circle cx={star.x} cy={star.y} r={highlightRadius} fill={"gold"} />
+      <Circle cx={star.x} cy={star.y} r={innerRadius} fill={"black"} />
+      <Circle
+        cx={star.x}
+        cy={star.y}
+        r={rr}
+        fill={star.fill}
+        onClick={handleStarClick}
+        name={star.name}
+      />
+    </React.Fragment>
   );
 };
 
@@ -307,7 +343,7 @@ function createStarArray(data) {
       negMagFac
     ),
     fill: randIndex(fillArray),
-    name: `${Faker.lorem.word()}${Faker.lorem.word()}`
+    name: capitalize(`${Faker.lorem.word()}${Faker.lorem.word()}`)
   }));
   return starArray;
 }
@@ -336,6 +372,10 @@ function starRadius(
     : facRetRad < dimRad
     ? dimRad
     : facRetRad;
+}
+
+function capitalize(s) {
+  return s[0].toUpperCase() + s.slice(1);
 }
 
 export default App;
