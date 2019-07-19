@@ -81,7 +81,8 @@ class App extends Component {
     //set in state
     const viewScaleFactor = 20;
     const size = 200;
-    const maxsize = size * 0.5;
+    const maxsize = size * 0.4;
+    const verticalOffset = -0.05; //percent
     e.preventDefault();
 
     const r = target.getAttribute("r");
@@ -92,7 +93,7 @@ class App extends Component {
     this.setState({
       detailStar: {
         x: size / 2,
-        y: size / 2,
+        y: size / 2 + verticalOffset * size,
         radius: rr,
         fill: fill
       },
