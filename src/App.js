@@ -51,6 +51,8 @@ const fillArray = [
   "white"
 ];
 
+const blankStar = { x: 50, y: 50, radius: 5, fill: "black" };
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -64,7 +66,7 @@ class App extends Component {
       brightMag: Number(-1.0),
       negMagFac: Number(50),
       starArray: [],
-      detailStar: { x: 50, y: 50, radius: 5, fill: "black" },
+      detailStar: blankStar,
       detailStarName: ""
     };
   }
@@ -115,6 +117,11 @@ class App extends Component {
 
   regenStarArray = data => {
     this.setState({ starArray: createStarArray(data) });
+    this.setState({ detailStar: blankStar, detailStarName: "" });
+  };
+
+  regenStarField = () => {
+    this.regenStarArray(this.state);
   };
 
   render() {
@@ -122,6 +129,12 @@ class App extends Component {
     return (
       <div className="App">
         <a href="https://github.com/jmbjr/galaxy">GitHub repo</a>
+        <br />
+        <Button
+          content="Regenerate Star Field"
+          variant="light blue"
+          onClick={this.regenStarField}
+        />
         <Inputs {...props} handleChange={this.handleChange} />
         <StarView
           detailStar={props.detailStar}
@@ -133,6 +146,17 @@ class App extends Component {
           handleStarClick={this.handleStarClick}
         />
       </div>
+    );
+  }
+}
+class Button extends React.Component {
+  render() {
+    const { variant, content, ...others } = this.props;
+
+    return (
+      <button className={variant} {...others}>
+        {content}
+      </button>
     );
   }
 }
