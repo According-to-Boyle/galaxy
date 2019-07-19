@@ -52,6 +52,10 @@ const fillArray = [
 ];
 
 const blankStar = { x: 50, y: 50, radius: 5, fill: "black" };
+const viewScaleFactor = 20;
+const size = 200;
+const maxsize = size * 0.4;
+const verticalOffset = -0.05; //percent
 
 class App extends Component {
   constructor(props) {
@@ -67,7 +71,8 @@ class App extends Component {
       negMagFac: Number(50),
       starArray: [],
       detailStar: blankStar,
-      detailStarName: ""
+      detailStarName: "",
+      currentStarIndex: 0
     };
   }
   componentDidMount() {
@@ -81,28 +86,33 @@ class App extends Component {
   handleStarClick = e => {
     const target = e.target;
     //set in state
-    const viewScaleFactor = 20;
-    const size = 200;
-    const maxsize = size * 0.4;
-    const verticalOffset = -0.05; //percent
-    e.preventDefault();
 
-    const r = target.getAttribute("r");
-    const rFac = r * viewScaleFactor;
-    const rr = rFac > maxsize ? maxsize : rFac;
+    e.preventDefault();
+    const radius = target.getAttribute("r");
     const fill = target.getAttribute("fill");
     const name = target.getAttribute("name");
+
+    this.setDetailStar(radius, fill, name);
+
+    // target.setAttribute("fill", fill);
+  };
+
+  setDetailStar(radius, fill, name) {
+    const xpos = size / 2;
+    const ypos = size / 2 + verticalOffset * size;
+    const rFac = radius * viewScaleFactor;
+    const rr = rFac > maxsize ? maxsize : rFac;
+
     this.setState({
       detailStar: {
-        x: size / 2,
-        y: size / 2 + verticalOffset * size,
+        x: xpos,
+        y: ypos,
         radius: rr,
         fill: fill
       },
       detailStarName: name
     });
-    // target.setAttribute("fill", fill);
-  };
+  }
 
   handleChange = event => {
     this.setState({
@@ -124,6 +134,31 @@ class App extends Component {
     this.regenStarArray(this.state);
   };
 
+  setDetailStarIndex = index => {
+    const star = this.state.starArray[index];
+    this.setState({ currentStarIndex: index });
+    this.setDetailStar(star.radius, star.fill, star.name);
+  };
+
+  selectFirstStar = () => {
+    this.setDetailStarIndex(0);
+  };
+  selectPreviousStar = () => {
+    const starIndex =
+      this.state.currentStarIndex === 0 ? 0 : this.state.currentStarIndex - 1;
+    this.setDetailStarIndex(starIndex);
+  };
+  selectNextStar = () => {
+    const starIndex =
+      this.state.currentStarIndex === this.state.starArray.length - 1
+        ? this.state.starArray.length - 1
+        : this.state.currentStarIndex + 1;
+    this.setDetailStarIndex(starIndex);
+  };
+  selectLastStar = () => {
+    this.setDetailStarIndex(this.state.starArray.length - 1);
+  };
+
   render() {
     const { ...props } = this.state;
     return (
@@ -135,6 +170,11 @@ class App extends Component {
           variant="light blue"
           onClick={this.regenStarField}
         />
+        <br />
+        <Button content="|<<" variant="white" onClick={this.selectFirstStar} />
+        <Button content="<" variant="white" onClick={this.selectPreviousStar} />
+        <Button content=">" variant="white" onClick={this.selectNextStar} />
+        <Button content=">>|" variant="white" onClick={this.selectLastStar} />
         <Inputs {...props} handleChange={this.handleChange} />
         <StarView
           detailStar={props.detailStar}
