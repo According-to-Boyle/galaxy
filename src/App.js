@@ -52,10 +52,6 @@ const fillArray = [
 ];
 
 const blankStar = { x: 0, y: 0, radius: -1, fill: "black", name: "" };
-const viewScaleFactor = 20;
-const size = 200;
-const maxsize = size * 0.4;
-const verticalOffset = -0.05; //percent
 
 class App extends Component {
   constructor(props) {
@@ -269,27 +265,38 @@ class DetailStarView extends Component {
   render() {
     const { starArray, currentStarIndex } = this.props;
 
+    const viewScaleFactor = 20;
+    const viewWidth = 200;
+    const viewHeight = viewWidth;
+    const maxViewRadius = viewWidth * 0.4;
+    const viewBottomTextVerticalOffset = -0.05; //percent
+
     const currentStar =
       currentStarIndex >= 0 ? starArray[currentStarIndex] : blankStar;
 
-    const xpos = size / 2;
-    const ypos = size / 2 + verticalOffset * size;
-    const rFac = currentStar.radius * viewScaleFactor;
-    const rr = rFac > maxsize ? maxsize : rFac;
+    const x = viewWidth / 2;
+    const y = viewWidth / 2 + viewBottomTextVerticalOffset * viewWidth;
+    const scaledRadius = currentStar.radius * viewScaleFactor;
+    const rr = scaledRadius > maxViewRadius ? maxViewRadius : scaledRadius;
 
     const detailViewStar = {
-      x: xpos,
-      y: ypos,
+      x: x,
+      y: y,
       radius: rr,
       fill: currentStar.fill,
       name: currentStar.name
     };
     return (
       detailViewStar.radius >= 0 && (
-        <Svg height={size} width={size}>
-          <SpaceBkg x="0" y="0" galaxySize={size} />
+        <Svg height={viewHeight} width={viewWidth}>
+          <SpaceBkg x="0" y="0" galaxySize={viewWidth} />
           <Star star={detailViewStar} />
-          <text textAnchor="middle" x={size / 2} y={size * 0.95} fill="white">
+          <text
+            textAnchor="middle"
+            x={viewWidth / 2}
+            y={viewWidth * 0.95}
+            fill="white"
+          >
             {detailViewStar.name}
           </text>
         </Svg>
@@ -326,7 +333,7 @@ const HighlightedStar = ({ star }) => {
       cx={star.x}
       cy={star.y}
       r={highlightRadius}
-      strokewidth={highlightStrokeWidth}
+      strokeWidth={highlightStrokeWidth}
       stroke={highlightStrokeColor}
       fill="none"
     />
