@@ -227,36 +227,34 @@ const Galaxy = props => {
   );
 };
 
-class StarField extends Component {
-  render() {
-    const { starArray, highlightedStarIndex, handleStarClick } = this.props;
+const StarField = props => {
+  const { starArray, highlightedStarIndex, handleStarClick } = props;
 
-    const highlightedStar =
-      typeof starArray[highlightedStarIndex] === "undefined"
-        ? blankStar
-        : starArray[highlightedStarIndex];
+  const highlightedStar =
+    typeof starArray[highlightedStarIndex] === "undefined"
+      ? blankStar
+      : starArray[highlightedStarIndex];
 
-    const drawStarField = starArray.map((star, index) => (
-      <Star
-        key={index}
-        star={star}
+  const drawStarField = starArray.map((star, index) => (
+    <Star
+      key={index}
+      star={star}
+      handleStarClick={handleStarClick}
+      index={index}
+    />
+  ));
+  return (
+    <Svg height={props.galaxySize} width={props.galaxySize}>
+      <SpaceBkg x="0" y="0" galaxySize={props.galaxySize} />
+      {drawStarField}
+      <HighlightedStar
+        key={highlightedStarIndex}
+        star={highlightedStar}
         handleStarClick={handleStarClick}
-        index={index}
       />
-    ));
-    return (
-      <Svg height={this.props.galaxySize} width={this.props.galaxySize}>
-        <SpaceBkg x="0" y="0" galaxySize={this.props.galaxySize} />
-        {drawStarField}
-        <HighlightedStar
-          key={highlightedStarIndex}
-          star={highlightedStar}
-          handleStarClick={handleStarClick}
-        />
-      </Svg>
-    );
-  }
-}
+    </Svg>
+  );
+};
 
 class DetailStarView extends Component {
   render() {
