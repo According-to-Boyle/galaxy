@@ -256,49 +256,47 @@ const StarField = props => {
   );
 };
 
-class DetailStarView extends Component {
-  render() {
-    const { starArray, currentStarIndex } = this.props;
+const DetailStarView = props => {
+  const { starArray, currentStarIndex } = props;
 
-    const viewScaleFactor = 20;
-    const viewWidth = 200;
-    const viewHeight = viewWidth;
-    const maxViewRadius = viewWidth * 0.4;
-    const viewBottomTextVerticalOffset = -0.05; //percent
+  const viewScaleFactor = 20;
+  const viewWidth = 200;
+  const viewHeight = viewWidth;
+  const maxViewRadius = viewWidth * 0.4;
+  const viewBottomTextVerticalOffset = -0.05; //percent
 
-    const currentStar =
-      currentStarIndex >= 0 ? starArray[currentStarIndex] : blankStar;
+  const currentStar =
+    currentStarIndex >= 0 ? starArray[currentStarIndex] : blankStar;
 
-    const x = viewWidth / 2;
-    const y = viewWidth / 2 + viewBottomTextVerticalOffset * viewWidth;
-    const scaledRadius = currentStar.radius * viewScaleFactor;
-    const rr = scaledRadius > maxViewRadius ? maxViewRadius : scaledRadius;
+  const x = viewWidth / 2;
+  const y = viewWidth / 2 + viewBottomTextVerticalOffset * viewWidth;
+  const scaledRadius = currentStar.radius * viewScaleFactor;
+  const rr = scaledRadius > maxViewRadius ? maxViewRadius : scaledRadius;
 
-    const detailViewStar = {
-      x: x,
-      y: y,
-      radius: rr,
-      fill: currentStar.fill,
-      name: currentStar.name
-    };
-    return (
-      detailViewStar.radius >= 0 && (
-        <Svg height={viewHeight} width={viewWidth}>
-          <SpaceBkg x="0" y="0" galaxySize={viewWidth} />
-          <Star star={detailViewStar} />
-          <text
-            textAnchor="middle"
-            x={viewWidth / 2}
-            y={viewWidth * 0.95}
-            fill="white"
-          >
-            {detailViewStar.name}
-          </text>
-        </Svg>
-      )
-    );
-  }
-}
+  const detailViewStar = {
+    x: x,
+    y: y,
+    radius: rr,
+    fill: currentStar.fill,
+    name: currentStar.name
+  };
+  return (
+    detailViewStar.radius >= 0 && (
+      <Svg height={viewHeight} width={viewWidth}>
+        <SpaceBkg x="0" y="0" galaxySize={viewWidth} />
+        <Star star={detailViewStar} />
+        <text
+          textAnchor="middle"
+          x={viewWidth / 2}
+          y={viewWidth * 0.95}
+          fill="white"
+        >
+          {detailViewStar.name}
+        </text>
+      </Svg>
+    )
+  );
+};
 
 const Star = ({ star, handleStarClick, index }) => {
   const rr = isNaN(star.radius) ? 0.1 : star.radius;
