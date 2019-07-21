@@ -209,25 +209,23 @@ const MainView = ({ galaxyMode, handleStarClick, ...props }) => {
   );
 };
 
-class Galaxy extends Component {
-  render() {
-    const { starArray, handleStarClick } = this.props;
-    const drawGalaxyStars = starArray.map((star, index) => (
-      <Star
-        key={index}
-        star={star}
-        handleStarClick={handleStarClick}
-        index={index}
-      />
-    ));
-    return (
-      <Svg height={this.props.galaxySize} width={this.props.galaxySize}>
-        <SpaceBkg x="0" y="0" galaxySize={this.props.galaxySize} />
-        {drawGalaxyStars}
-      </Svg>
-    );
-  }
-}
+const Galaxy = props => {
+  const { starArray, handleStarClick } = props;
+  const drawGalaxyStars = starArray.map((star, index) => (
+    <Star
+      key={index}
+      star={star}
+      handleStarClick={handleStarClick}
+      index={index}
+    />
+  ));
+  return (
+    <Svg height={this.props.galaxySize} width={props.galaxySize}>
+      <SpaceBkg x="0" y="0" galaxySize={props.galaxySize} />
+      {drawGalaxyStars}
+    </Svg>
+  );
+};
 
 class StarField extends Component {
   render() {
