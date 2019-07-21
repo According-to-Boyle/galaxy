@@ -51,7 +51,7 @@ const fillArray = [
   "white"
 ];
 
-const blankStar = { x: 50, y: 50, radius: 5, fill: "black", name: "" };
+const blankStar = { x: 0, y: 0, radius: -1, fill: "black", name: "" };
 const viewScaleFactor = 20;
 const size = 200;
 const maxsize = size * 0.4;
@@ -91,9 +91,10 @@ class App extends Component {
     const radius = target.getAttribute("r");
     const fill = target.getAttribute("fill");
     const name = target.getAttribute("name");
+    const index = target.getAttribute("index");
 
     this.setDetailStar(radius, fill, name);
-
+    this.setDetailStarIndex(index);
     // target.setAttribute("fill", fill);
   };
 
@@ -140,7 +141,7 @@ class App extends Component {
 
   setDetailStarIndex = index => {
     const star = this.state.starArray[index];
-    this.setState({ currentStarIndex: index });
+    this.setState({ currentStarIndex: Number(index) });
     this.setDetailStar(star.radius, star.fill, star.name);
   };
 
@@ -232,7 +233,12 @@ class Galaxy extends Component {
         : starArray[highlightedStarIndex];
 
     const drawStars = starArray.map((star, index) => (
-      <Star key={index} star={star} handleStarClick={handleStarClick} />
+      <Star
+        key={index}
+        star={star}
+        handleStarClick={handleStarClick}
+        index={index}
+      />
     ));
     return (
       <Svg height={this.props.galaxySize} width={this.props.galaxySize}>
@@ -263,7 +269,7 @@ class StarView extends Component {
   }
 }
 
-const Star = ({ star, handleStarClick }) => {
+const Star = ({ star, handleStarClick, index }) => {
   const rr = isNaN(star.radius) ? 0.1 : star.radius;
   return (
     <Circle
@@ -273,28 +279,28 @@ const Star = ({ star, handleStarClick }) => {
       fill={star.fill}
       onClick={handleStarClick}
       name={star.name}
+      index={index}
     />
   );
 };
 
-const HighlightedStar = ({ star, handleStarClick }) => {
-  const rr = isNaN(star.radius) ? 0.1 : star.radius;
-  const highlightRadius = 5;
-  const highlightRadiusThickness = 1;
-  const innerRadius = highlightRadius - highlightRadiusThickness;
-  return (
-    <React.Fragment>
-      <Circle cx={star.x} cy={star.y} r={highlightRadius} fill={"gold"} />
-      <Circle cx={star.x} cy={star.y} r={innerRadius} fill={"black"} />
-      <Circle
-        cx={star.x}
-        cy={star.y}
-        r={rr}
-        fill={star.fill}
-        onClick={handleStarClick}
-        name={star.name}
-      />
-    </React.Fragment>
+const HighlightedStar = ({ star }) => {
+  const highlightRadiusSpacing = 5;
+  const highlightStrokeWidth = 1.5;
+  const highlightStrokeColor = "gold";
+  const highlightRadius = star.radius + highlightRadiusSpacing;
+
+  return star.radius < 0 ? (
+    false
+  ) : (
+    <Circle
+      cx={star.x}
+      cy={star.y}
+      r={highlightRadius}
+      stroke-width={highlightStrokeWidth}
+      stroke={highlightStrokeColor}
+      fill="none"
+    />
   );
 };
 
