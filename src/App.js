@@ -139,6 +139,8 @@ class App extends Component {
 
   render() {
     const { ...props } = this.state;
+    const detailViewIsVisble =
+      !props.galaxyMode && props.currentStarIndex >= 0 ? true : false;
     return (
       <div className="App">
         <a href="https://github.com/jmbjr/galaxy">GitHub repo</a>
@@ -159,7 +161,7 @@ class App extends Component {
         <Button content=">" variant="green" onClick={this.selectNextStar} />
         <Button content=">>|" variant="green" onClick={this.selectLastStar} />
         <br />
-        <DetailStarView {...props} />
+        <DetailStarView {...props} isVisible={detailViewIsVisble} />
         <MainView
           {...props}
           galaxyMode={this.state.galaxyMode}
@@ -227,9 +229,12 @@ const Galaxy = props => {
   );
 };
 
-const StarField = props => {
-  const { starArray, highlightedStarIndex, handleStarClick } = props;
-
+const StarField = ({
+  starArray,
+  galaxySize,
+  highlightedStarIndex,
+  handleStarClick
+}) => {
   const highlightedStar =
     typeof starArray[highlightedStarIndex] === "undefined"
       ? blankStar
@@ -244,8 +249,8 @@ const StarField = props => {
     />
   ));
   return (
-    <Svg height={props.galaxySize} width={props.galaxySize}>
-      <SpaceBkg x="0" y="0" galaxySize={props.galaxySize} />
+    <Svg height={galaxySize} width={galaxySize}>
+      <SpaceBkg x="0" y="0" galaxySize={galaxySize} />
       {drawStarField}
       <HighlightedStar
         key={highlightedStarIndex}
@@ -256,9 +261,7 @@ const StarField = props => {
   );
 };
 
-const DetailStarView = props => {
-  const { starArray, currentStarIndex } = props;
-
+const DetailStarView = ({ starArray, currentStarIndex, isVisible }) => {
   const viewScaleFactor = 20;
   const viewWidth = 200;
   const viewHeight = viewWidth;
@@ -280,8 +283,9 @@ const DetailStarView = props => {
     fill: currentStar.fill,
     name: currentStar.name
   };
+
   return (
-    detailViewStar.radius >= 0 && (
+    isVisible && (
       <Svg height={viewHeight} width={viewWidth}>
         <SpaceBkg x="0" y="0" galaxySize={viewWidth} />
         <Star star={detailViewStar} />
