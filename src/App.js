@@ -181,11 +181,11 @@ class App extends Component {
         <Button content=">" variant="white" onClick={this.selectNextStar} />
         <Button content=">>|" variant="white" onClick={this.selectLastStar} />
         <br />
-        <StarView
+        <DetailStarView
           detailStar={props.detailStar}
           detailStarName={props.detailStarName}
         />
-        <Galaxy
+        <StarField
           {...props}
           starArray={this.state.starArray}
           handleStarClick={this.handleStarClick}
@@ -223,7 +223,7 @@ const Inputs = ({ handleChange, ...rest }) => {
   return <React.Fragment>{makeInputs}</React.Fragment>;
 };
 
-class Galaxy extends Component {
+class StarField extends Component {
   render() {
     const { starArray, highlightedStarIndex, handleStarClick } = this.props;
 
@@ -254,7 +254,7 @@ class Galaxy extends Component {
   }
 }
 
-class StarView extends Component {
+class DetailStarView extends Component {
   render() {
     const bigStar = { ...this.props.detailStar };
     return (
