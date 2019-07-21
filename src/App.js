@@ -258,13 +258,15 @@ class StarView extends Component {
   render() {
     const bigStar = { ...this.props.detailStar };
     return (
-      <Svg height={size} width={size}>
-        <SpaceBkg x="0" y="0" galaxySize={size} />
-        <Star star={bigStar} />
-        <text textAnchor="middle" x={size / 2} y={size * 0.95} fill="white">
-          {this.props.detailStarName}
-        </text>
-      </Svg>
+      bigStar.radius >= 0 && (
+        <Svg height={size} width={size}>
+          <SpaceBkg x="0" y="0" galaxySize={size} />
+          <Star star={bigStar} />
+          <text textAnchor="middle" x={size / 2} y={size * 0.95} fill="white">
+            {this.props.detailStarName}
+          </text>
+        </Svg>
+      )
     );
   }
 }
