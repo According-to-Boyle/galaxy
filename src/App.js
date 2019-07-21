@@ -72,7 +72,8 @@ class App extends Component {
       starArray: [],
       detailStar: blankStar,
       detailStarName: "",
-      currentStarIndex: -1
+      currentStarIndex: -1,
+      galaxyMode: false //starField = 1, galaxy = 2, use enum or js equiv.
     };
   }
   componentDidMount() {
@@ -139,6 +140,10 @@ class App extends Component {
     this.regenStarArray(this.state);
   };
 
+  toggleGalaxyMode = () => {
+    this.setState({ galaxyMode: !this.state.galaxyMode });
+  };
+
   setDetailStarIndex = index => {
     const star = this.state.starArray[index];
     this.setState({ currentStarIndex: Number(index) });
@@ -175,21 +180,25 @@ class App extends Component {
           variant="light blue"
           onClick={this.regenStarField}
         />
+        <Button
+          content="Toggle Galaxy Mode"
+          variant="red"
+          onClick={this.toggleGalaxyMode}
+        />
         <br />
-        <Button content="|<<" variant="white" onClick={this.selectFirstStar} />
-        <Button content="<" variant="white" onClick={this.selectPreviousStar} />
-        <Button content=">" variant="white" onClick={this.selectNextStar} />
-        <Button content=">>|" variant="white" onClick={this.selectLastStar} />
+        <Button content="|<<" variant="green" onClick={this.selectFirstStar} />
+        <Button content="<" variant="green" onClick={this.selectPreviousStar} />
+        <Button content=">" variant="green" onClick={this.selectNextStar} />
+        <Button content=">>|" variant="green" onClick={this.selectLastStar} />
         <br />
         <DetailStarView
           detailStar={props.detailStar}
           detailStarName={props.detailStarName}
         />
-        <StarField
+        <MainView
           {...props}
-          starArray={this.state.starArray}
+          galaxyMode={this.state.galaxyMode}
           handleStarClick={this.handleStarClick}
-          highlightedStarIndex={this.state.currentStarIndex}
         />
         <Inputs {...props} handleChange={this.handleChange} />
       </div>
@@ -223,16 +232,23 @@ const Inputs = ({ handleChange, ...rest }) => {
   return <React.Fragment>{makeInputs}</React.Fragment>;
 };
 
-class StarField extends Component {
+const MainView = ({ galaxyMode, handleStarClick, ...props }) => {
+  return galaxyMode ? (
+    <div> Galaxy View Coming Soon!</div>
+  ) : (
+    <StarField
+      {...props}
+      starArray={props.starArray}
+      handleStarClick={handleStarClick}
+      highlightedStarIndex={props.currentStarIndex}
+    />
+  );
+};
+
+class Galaxy extends Component {
   render() {
-    const { starArray, highlightedStarIndex, handleStarClick } = this.props;
-
-    const highlightedStar =
-      typeof starArray[highlightedStarIndex] === "undefined"
-        ? blankStar
-        : starArray[highlightedStarIndex];
-
-    const drawStars = starArray.map((star, index) => (
+    const { starArray, handleStarClick } = this.props;
+    const drawGalaxyStars = starArray.map((star, index) => (
       <Star
         key={index}
         star={star}
@@ -243,7 +259,33 @@ class StarField extends Component {
     return (
       <Svg height={this.props.galaxySize} width={this.props.galaxySize}>
         <SpaceBkg x="0" y="0" galaxySize={this.props.galaxySize} />
-        {drawStars}
+        {drawGalaxyStars}
+      </Svg>
+    );
+  }
+}
+
+class StarField extends Component {
+  render() {
+    const { starArray, highlightedStarIndex, handleStarClick } = this.props;
+
+    const highlightedStar =
+      typeof starArray[highlightedStarIndex] === "undefined"
+        ? blankStar
+        : starArray[highlightedStarIndex];
+
+    const drawStarField = starArray.map((star, index) => (
+      <Star
+        key={index}
+        star={star}
+        handleStarClick={handleStarClick}
+        index={index}
+      />
+    ));
+    return (
+      <Svg height={this.props.galaxySize} width={this.props.galaxySize}>
+        <SpaceBkg x="0" y="0" galaxySize={this.props.galaxySize} />
+        {drawStarField}
         <HighlightedStar
           key={highlightedStarIndex}
           star={highlightedStar}
