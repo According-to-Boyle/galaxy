@@ -170,17 +170,16 @@ class App extends Component {
     );
   }
 }
-class Button extends React.Component {
-  render() {
-    const { variant, content, ...others } = this.props;
 
-    return (
-      <button className={variant} {...others}>
-        {content}
-      </button>
-    );
-  }
-}
+const Button = props => {
+  const { variant, content, ...others } = props;
+
+  return (
+    <button className={variant} {...others}>
+      {content}
+    </button>
+  );
+};
 
 const Inputs = ({ handleChange, ...rest }) => {
   const makeInputs = Object.entries(rest).map(input => (
