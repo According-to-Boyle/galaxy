@@ -70,8 +70,6 @@ class App extends Component {
       brightMag: Number(-1.0),
       negMagFac: Number(50),
       starArray: [],
-      detailStar: blankStar,
-      detailStarName: "",
       currentStarIndex: -1,
       galaxyMode: false //starField = 1, galaxy = 2, use enum or js equiv.
     };
@@ -80,41 +78,19 @@ class App extends Component {
     this.regenStarArray(this.state);
   }
 
-  handleGalaxyClick = event => {
+  handleGalaxyClick = () => {
     this.regenStarArray(this.state);
   };
 
   handleStarClick = e => {
     const target = e.target;
-    //set in state
 
     e.preventDefault();
-    const radius = target.getAttribute("r");
-    const fill = target.getAttribute("fill");
-    const name = target.getAttribute("name");
-    const index = target.getAttribute("index");
 
-    this.setDetailStar(radius, fill, name);
+    const index = target.getAttribute("index");
     this.setDetailStarIndex(index);
     // target.setAttribute("fill", fill);
   };
-
-  setDetailStar(radius, fill, name) {
-    const xpos = size / 2;
-    const ypos = size / 2 + verticalOffset * size;
-    const rFac = radius * viewScaleFactor;
-    const rr = rFac > maxsize ? maxsize : rFac;
-
-    this.setState({
-      detailStar: {
-        x: xpos,
-        y: ypos,
-        radius: rr,
-        fill: fill
-      },
-      detailStarName: name
-    });
-  }
 
   handleChange = event => {
     this.setState({
@@ -130,8 +106,6 @@ class App extends Component {
   regenStarArray = data => {
     this.setState({ starArray: createStarArray(data) });
     this.setState({
-      detailStar: blankStar,
-      detailStarName: "",
       currentStarIndex: -1
     });
   };
@@ -145,9 +119,7 @@ class App extends Component {
   };
 
   setDetailStarIndex = index => {
-    const star = this.state.starArray[index];
     this.setState({ currentStarIndex: Number(index) });
-    this.setDetailStar(star.radius, star.fill, star.name);
   };
 
   selectFirstStar = () => {
@@ -191,10 +163,7 @@ class App extends Component {
         <Button content=">" variant="green" onClick={this.selectNextStar} />
         <Button content=">>|" variant="green" onClick={this.selectLastStar} />
         <br />
-        <DetailStarView
-          detailStar={props.detailStar}
-          detailStarName={props.detailStarName}
-        />
+        <DetailStarView {...props} />
         <MainView
           {...props}
           galaxyMode={this.state.galaxyMode}
@@ -298,14 +267,30 @@ class StarField extends Component {
 
 class DetailStarView extends Component {
   render() {
-    const bigStar = { ...this.props.detailStar };
+    const { starArray, currentStarIndex } = this.props;
+
+    const currentStar =
+      currentStarIndex >= 0 ? starArray[currentStarIndex] : blankStar;
+
+    const xpos = size / 2;
+    const ypos = size / 2 + verticalOffset * size;
+    const rFac = currentStar.radius * viewScaleFactor;
+    const rr = rFac > maxsize ? maxsize : rFac;
+
+    const detailViewStar = {
+      x: xpos,
+      y: ypos,
+      radius: rr,
+      fill: currentStar.fill,
+      name: currentStar.name
+    };
     return (
-      bigStar.radius >= 0 && (
+      detailViewStar.radius >= 0 && (
         <Svg height={size} width={size}>
           <SpaceBkg x="0" y="0" galaxySize={size} />
-          <Star star={bigStar} />
+          <Star star={detailViewStar} />
           <text textAnchor="middle" x={size / 2} y={size * 0.95} fill="white">
-            {this.props.detailStarName}
+            {detailViewStar.name}
           </text>
         </Svg>
       )
@@ -341,7 +326,7 @@ const HighlightedStar = ({ star }) => {
       cx={star.x}
       cy={star.y}
       r={highlightRadius}
-      stroke-width={highlightStrokeWidth}
+      strokewidth={highlightStrokeWidth}
       stroke={highlightStrokeColor}
       fill="none"
     />
