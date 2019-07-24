@@ -1,57 +1,14 @@
 import React, { Component } from "react";
-import Svg, { Circle, Rect } from "react-native-svg";
+import Svg, { Circle } from "react-native-svg";
 import "./App.css";
-import InputBox from "./components/InputBox";
-import { randNumber, randIndex } from "./util/util.js";
+import { starColorArray, blankStar } from "./consts/consts.js";
+import Inputs from "./components/Inputs";
+import Star from "./components/Star";
+import SpaceBkg from "./components/SpaceBkg";
+import DetailStarView from "./components/DetailStarView";
+import Button from "./components/Button";
+import { randNumber, randIndex, capitalize } from "./util/util.js";
 import Faker from "faker";
-
-const fillArray = [
-  "aqua",
-  "coral",
-  "red",
-  "blue",
-  "green",
-  "yellow",
-  "gold",
-  "khaki",
-  "maroon",
-  "orangered",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white",
-  "white"
-];
-
-const blankStar = { x: 0, y: 0, radius: -1, fill: "black", name: "" };
 
 class App extends Component {
   constructor(props) {
@@ -173,31 +130,6 @@ class App extends Component {
   }
 }
 
-const Button = props => {
-  const { variant, content, ...others } = props;
-
-  return (
-    <button className={variant} {...others}>
-      {content}
-    </button>
-  );
-};
-
-const Inputs = ({ handleChange, ...rest }) => {
-  const makeInputs = Object.entries(rest).map(input => (
-    <InputBox
-      key={input[0]}
-      className="center-block"
-      value={input[1]}
-      name={input[0]}
-      handleChange={handleChange}
-    >
-      {input[0]}
-    </InputBox>
-  ));
-  return <React.Fragment>{makeInputs}</React.Fragment>;
-};
-
 const MainView = ({ galaxyMode, handleStarClick, ...props }) => {
   return galaxyMode ? (
     <div> Galaxy View Coming Soon!</div>
@@ -261,62 +193,6 @@ const StarField = ({
   );
 };
 
-const DetailStarView = ({ starArray, currentStarIndex, isVisible }) => {
-  const viewScaleFactor = 20;
-  const viewWidth = 200;
-  const viewHeight = viewWidth;
-  const maxViewRadius = viewWidth * 0.4;
-  const viewBottomTextVerticalOffset = -0.05; //percent
-
-  const currentStar =
-    currentStarIndex >= 0 ? starArray[currentStarIndex] : blankStar;
-
-  const x = viewWidth / 2;
-  const y = viewWidth / 2 + viewBottomTextVerticalOffset * viewWidth;
-  const scaledRadius = currentStar.radius * viewScaleFactor;
-  const rr = scaledRadius > maxViewRadius ? maxViewRadius : scaledRadius;
-
-  const detailViewStar = {
-    x: x,
-    y: y,
-    radius: rr,
-    fill: currentStar.fill,
-    name: currentStar.name
-  };
-
-  return (
-    isVisible && (
-      <Svg height={viewHeight} width={viewWidth}>
-        <SpaceBkg x="0" y="0" galaxySize={viewWidth} />
-        <Star star={detailViewStar} />
-        <text
-          textAnchor="middle"
-          x={viewWidth / 2}
-          y={viewWidth * 0.95}
-          fill="white"
-        >
-          {detailViewStar.name}
-        </text>
-      </Svg>
-    )
-  );
-};
-
-const Star = ({ star, handleStarClick, index }) => {
-  const rr = isNaN(star.radius) ? 0.1 : star.radius;
-  return (
-    <Circle
-      cx={star.x}
-      cy={star.y}
-      r={rr}
-      fill={star.fill}
-      onClick={handleStarClick}
-      name={star.name}
-      index={index}
-    />
-  );
-};
-
 const HighlightedStar = ({ star }) => {
   const highlightRadiusSpacing = 5;
   const highlightStrokeWidth = 1.5;
@@ -333,19 +209,6 @@ const HighlightedStar = ({ star }) => {
       strokeWidth={highlightStrokeWidth}
       stroke={highlightStrokeColor}
       fill="none"
-    />
-  );
-};
-
-const SpaceBkg = ({ x, y, galaxySize, stroke = "black", fill = "black" }) => {
-  return (
-    <Rect
-      x={x}
-      y={y}
-      width={galaxySize}
-      height={galaxySize}
-      stroke={stroke}
-      fill="black"
     />
   );
 };
@@ -381,7 +244,7 @@ function createStarArray(data) {
       dimRad,
       negMagFac
     ),
-    fill: randIndex(fillArray),
+    fill: randIndex(starColorArray),
     name: capitalize(`${Faker.lorem.word()}${Faker.lorem.word()}`)
   }));
   return starArray;
@@ -411,10 +274,6 @@ function starRadius(
     : facRetRad < dimRad
     ? dimRad
     : facRetRad;
-}
-
-function capitalize(s) {
-  return s[0].toUpperCase() + s.slice(1);
 }
 
 export default App;

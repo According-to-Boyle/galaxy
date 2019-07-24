@@ -47,7 +47,18 @@ function randIndex(array = []) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
+function capitalize(s) {
+  return s[0].toUpperCase() + s.slice(1);
+}
+
 module.exports = {
-  randNumber: randNumber,
-  randIndex: randIndex
+  randInt,
+  randNumber,
+  randNumberBias,
+  randNumberBiasMin,
+  randNumberBiasMax,
+  randNumberBetaDist,
+  randBeta,
+  randIndex,
+  capitalize
 };
