@@ -9,7 +9,7 @@ const SpaceBkg = ({ x, y, galaxySize, stroke = "black", fill = "black" }) => {
       width={galaxySize}
       height={galaxySize}
       stroke={stroke}
-      fill="black"
+      fill={fill}
     />
   );
 };

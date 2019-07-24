@@ -19,6 +19,10 @@ const DetailStarView = ({ starArray, currentStarIndex, isVisible }) => {
   const scaledRadius = currentStar.radius * viewScaleFactor;
   const rr = scaledRadius > maxViewRadius ? maxViewRadius : scaledRadius;
 
+  const anchorx = 0;
+  const anchory = 0;
+  const defaultStarFill = "white";
+
   const detailViewStar = {
     x: x,
     y: y,
@@ -30,13 +34,13 @@ const DetailStarView = ({ starArray, currentStarIndex, isVisible }) => {
   return (
     isVisible && (
       <Svg height={viewHeight} width={viewWidth}>
-        <SpaceBkg x="0" y="0" galaxySize={viewWidth} />
+        <SpaceBkg x={anchorx} y={anchory} galaxySize={viewWidth} />
         <Star star={detailViewStar} />
         <text
           textAnchor="middle"
           x={viewWidth / 2}
           y={viewWidth * 0.95}
-          fill="white"
+          fill={defaultStarFill}
         >
           {detailViewStar.name}
         </text>
