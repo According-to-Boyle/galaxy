@@ -52,13 +52,13 @@ function capitalize(s) {
 }
 
 module.exports = {
-  randInt: randInt,
-  randNumber: randNumber,
-  randNumberBias: randNumberBias,
-  randNumberBiasMin: randNumberBiasMin,
-  randNumberBiasMax: randNumberBiasMax,
-  randNumberBetaDist: randNumberBetaDist,
-  randBeta: randBeta,
-  randIndex: randIndex,
-  capitalize: capitalize
+  randInt,
+  randNumber,
+  randNumberBias,
+  randNumberBiasMin,
+  randNumberBiasMax,
+  randNumberBetaDist,
+  randBeta,
+  randIndex,
+  capitalize
 };
