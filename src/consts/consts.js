@@ -1,6 +1,6 @@
 const blankStar = { x: 0, y: 0, radius: -1, fill: "black", name: "" };
 
-const fillArray = [
+const starColorArray = [
   "aqua",
   "coral",
   "red",
@@ -46,4 +46,4 @@ const fillArray = [
   "white"
 ];
 
-export { fillArray, blankStar };
+export { starColorArray, blankStar };

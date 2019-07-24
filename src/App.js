@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Svg, { Circle } from "react-native-svg";
 import "./App.css";
-import { fillArray, blankStar } from "./consts/consts.js";
+import { starColorArray, blankStar } from "./consts/consts.js";
 import Inputs from "./components/Inputs";
 import Star from "./components/Star";
 import SpaceBkg from "./components/SpaceBkg";
@@ -244,7 +244,7 @@ function createStarArray(data) {
       dimRad,
       negMagFac
     ),
-    fill: randIndex(fillArray),
+    fill: randIndex(starColorArray),
     name: capitalize(`${Faker.lorem.word()}${Faker.lorem.word()}`)
   }));
   return starArray;
