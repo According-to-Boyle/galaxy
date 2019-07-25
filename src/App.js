@@ -213,31 +213,31 @@ const HighlightedStar = ({ star }) => {
   );
 };
 
-function createStarArray(data) {
-  const {
-    galaxyMargin,
-    galaxySize,
-    numStars,
-    dimRad,
-    brightRad,
-    dimMag,
-    brightMag,
-    negMagFac
-  } = data;
-
+function createStarArray({
+  galaxyMargin,
+  galaxySize,
+  numStars,
+  dimRad,
+  brightRad,
+  dimMag,
+  brightMag,
+  negMagFac
+}) {
   const mincoord = galaxyMargin;
   const maxcoord = galaxySize - 2 * galaxyMargin;
   const protoArray = Array.apply(null, { length: numStars }).map(
     Number.call,
     Number
   );
-
+  const probability = () => {
+    return Math.random();
+  };
   const starArray = protoArray.map(star => ({
     ...star,
     x: randNumber(mincoord, maxcoord),
     y: randNumber(mincoord, maxcoord),
     radius: starRadius(
-      starMagnitude(Math.random()),
+      starMagnitude(probability()),
       brightMag,
       brightRad,
       dimMag,
