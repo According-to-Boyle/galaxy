@@ -51,6 +51,10 @@ function capitalize(s) {
   return s[0].toUpperCase() + s.slice(1);
 }
 
+const probability = () => {
+  return Math.random();
+};
+
 module.exports = {
   randInt,
   randNumber,
@@ -60,5 +64,6 @@ module.exports = {
   randNumberBetaDist,
   randBeta,
   randIndex,
-  capitalize
+  capitalize,
+  probability
 };
