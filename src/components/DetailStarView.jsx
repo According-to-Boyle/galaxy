@@ -4,7 +4,7 @@ import SpaceBkg from "./SpaceBkg";
 import Svg from "react-native-svg";
 import { blankStar } from "../consts/consts.js";
 
-const DetailStarView = ({ starArray, currentStarIndex, isVisible }) => {
+const DetailStarView = ({ starFieldArray, currentStarIndex, isVisible }) => {
   const viewScaleFactor = 20;
   const viewWidth = 200;
   const viewHeight = viewWidth;
@@ -12,7 +12,7 @@ const DetailStarView = ({ starArray, currentStarIndex, isVisible }) => {
   const viewBottomTextVerticalOffset = -0.05; //percent
 
   const currentStar =
-    currentStarIndex >= 0 ? starArray[currentStarIndex] : blankStar;
+    currentStarIndex >= 0 ? starFieldArray[currentStarIndex] : blankStar;
 
   const x = viewWidth / 2;
   const y = viewWidth / 2 + viewBottomTextVerticalOffset * viewWidth;
